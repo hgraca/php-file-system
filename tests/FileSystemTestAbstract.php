@@ -135,6 +135,48 @@ abstract class FileSystemTestAbstract extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * @dataProvider dataProvider_testCopyFile_successful
+     */
+    public function testCopyFile_successful(string $sourcePath, string $destinationPath)
+    {
+        $sourcePath = $this->getBasePath() . $sourcePath;
+        $destinationPath = $this->getBasePath() . $destinationPath;
+
+        self::assertTrue($this->fileSystem->copyFile($sourcePath, $destinationPath));
+        self::assertTrue($this->fileSystem->fileExists($destinationPath));
+        self::assertEquals($this->fileSystem->readFile($sourcePath), $this->fileSystem->readFile($destinationPath));
+    }
+
+    public function dataProvider_testCopyFile_successful(): array
+    {
+        return [
+            ['/a/dir/fileA', '/a/dir/fileA'],
+            ['/a/dir/fileA', '/a/dir/fileZ'],
+            ['/a/dir/fileA', '/a/dir/unexistent_dir/fileZ'],
+        ];
+    }
+
+    /**
+     * @dataProvider dataProvider_testCopyFile_fail
+     */
+    public function testCopyFile_fail(string $sourcePath, string $destinationPath, string $expectedException)
+    {
+        $sourcePath      = $this->getBasePath() . $sourcePath;
+        $destinationPath = $this->getBasePath() . $destinationPath;
+
+        self::expectException($expectedException);
+        $this->fileSystem->copyFile($sourcePath, $destinationPath);
+    }
+
+    public function dataProvider_testCopyFile_fail(): array
+    {
+        return [
+            ['/a/dir/fileA', '/a/dir', FileSystemException::class],
+            ['/a/dir/fileZ', '/a/dir/fileQ', FileNotFoundException::class],
+        ];
+    }
+
+    /**
      * @dataProvider dataProvider_testDeleteFile_successful
      */
     public function testDeleteFile_successful(string $path)

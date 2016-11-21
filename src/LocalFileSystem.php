@@ -1,6 +1,7 @@
 <?php
 namespace Hgraca\FileSystem;
 
+use DirectoryIterator;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 
@@ -31,9 +32,24 @@ class LocalFileSystem extends FileSystemAbstract
         file_put_contents($path, $content);
     }
 
+    protected function copyFileRaw(string $sourcePath, string $destinationPath)
+    {
+        copy($sourcePath, $destinationPath);
+    }
+
     protected function deleteFileRaw(string $path)
     {
         unlink($path);
+    }
+
+    protected function createLinkRaw(string $path, string $targetPath)
+    {
+        symlink($targetPath, $path);
+    }
+
+    protected function getLinkTargetRaw(string $path): string
+    {
+        return readlink($path);
     }
 
     public function createDirRaw(string $path)
@@ -58,41 +74,17 @@ class LocalFileSystem extends FileSystemAbstract
     }
 
     /**
-     * TODO create the tests for LocalFileSystem::copy
+     * @return string[] The array with the file and dir names
      */
-    public function copy(string $sourcePath, string $destinationPath): bool
+    public function readDirRaw(string $path): array
     {
-        // Check for symlinks
-        if ($this->linkExists($sourcePath)) {
-            return symlink(readlink($sourcePath), $destinationPath);
+       $iterator = new DirectoryIterator($path);
+
+        $contents = [];
+        foreach ($iterator as $fileInfo) {
+            $contents[] = $fileInfo->getFilename();
         }
 
-        // Simple copy for a file
-        if ($this->fileExists($sourcePath)) {
-            return copy($sourcePath, $destinationPath);
-        }
-
-        // Make destination directory
-        if ($this->dirExists($destinationPath)) {
-            $this->deleteDir($destinationPath);
-        }
-        $this->createDir($destinationPath);
-
-        // Loop through the folder
-        $dir = dir($sourcePath);
-        while (false !== $entry = $dir->read()) {
-            // Skip pointers
-            if ($entry == '.' || $entry == '..') {
-                continue;
-            }
-
-            // Deep copy directories
-            $this->copy("$sourcePath/$entry", "$destinationPath/$entry");
-        }
-
-        // Clean up
-        $dir->close();
-
-        return true;
+        return $contents;
     }
 }

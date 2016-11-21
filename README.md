@@ -13,10 +13,11 @@ composer require hgraca/file-system
 
 ## Todo
 
-- Implement `FileSystemAbstract::dirname` to match `dirname`
-- Create the tests for `LocalFileSystem::copy`
-- Implement `InMemoryFileSystem::copy`
-- Create the tests for `InMemoryFileSystem::copy`
-- Implement `InMemoryFileSystem::linkExists`
-- Create the tests for `InMemoryFileSystem::linkExists`
+- Create the tests for `FileSystemAbstract::readDir`
+- Create the tests for `FileSystemAbstract::copy`
+- Create the tests for `FileSystemAbstract::linkExists`
+- Create the tests for `FileSystemAbstract::copyLink`
+- Create the tests for `FileSystemAbstract::createLink`
+- Create the tests for `FileSystemAbstract::getLinkTarget`
 - Create the tests for `FileSystemAbstract::getAbsolutePath`
+- Change structure from inheritance into composition

@@ -6,6 +6,7 @@ use Hgraca\Helper\StringHelper;
 class InMemoryFileSystem extends FileSystemAbstract
 {
     const DIR_DISCRIMINATOR = 'dir';
+    const LINK_DISCRIMINATOR = '@->';
 
     /** @var array */
     private $fileSystem = [];
@@ -15,13 +16,10 @@ class InMemoryFileSystem extends FileSystemAbstract
         return array_key_exists($path, $this->fileSystem) && $this->fileSystem[$path] === self::DIR_DISCRIMINATOR;
     }
 
-    /**
-     * TODO create the tests for InMemoryFileSystem::linkExists
-     */
     protected function linkExistsRaw(string $path): bool
     {
-        // TODO implement InMemoryFileSystem::linkExists
-        throw new \Exception('Not implemented ' . __METHOD__);
+        return array_key_exists($path, $this->fileSystem)
+        && StringHelper::hasBeginning(self::LINK_DISCRIMINATOR, $this->fileSystem[$path]);
     }
 
     protected function fileExistsRaw(string $path): bool
@@ -39,9 +37,24 @@ class InMemoryFileSystem extends FileSystemAbstract
         $this->fileSystem[$path] = $content;
     }
 
+    protected function copyFileRaw(string $sourcePath, string $destinationPath)
+    {
+        $this->writeFileRaw($destinationPath, $this->readFileRaw($sourcePath));
+    }
+
     protected function deleteFileRaw(string $path)
     {
         unset($this->fileSystem[$path]);
+    }
+
+    protected function createLinkRaw(string $path, string $targetPath)
+    {
+        $this->fileSystem[$path] = self::LINK_DISCRIMINATOR . $targetPath;
+    }
+
+    protected function getLinkTargetRaw(string $path): string
+    {
+        return StringHelper::removeFromBeginning(self::LINK_DISCRIMINATOR, $this->fileSystem[$path]);
     }
 
     protected function createDirRaw(string $path)
@@ -49,7 +62,7 @@ class InMemoryFileSystem extends FileSystemAbstract
         $this->fileSystem[$path] = self::DIR_DISCRIMINATOR;
     }
 
-    public function deleteDirRaw(string $path)
+    protected function deleteDirRaw(string $path)
     {
         foreach ($this->fileSystem as $existingPath => $content) {
             if (StringHelper::hasBeginning($path, $existingPath)) {
@@ -59,11 +72,19 @@ class InMemoryFileSystem extends FileSystemAbstract
     }
 
     /**
-     * TODO create the tests for InMemoryFileSystem::copy
+     * @return string[] The array with the file and dir names
      */
-    public function copy(string $sourcePath, string $destinationPath): bool
+    protected function readDirRaw(string $path): array
     {
-        // TODO implement InMemoryFileSystem::copy
-        throw new \Exception('Not implemented' . __METHOD__);
+        $content = [];
+        foreach ($this->fileSystem as $existingPath => $content) {
+            if (StringHelper::hasBeginning($path, $existingPath)) {
+                $content[] = current(
+                    explode(DIRECTORY_SEPARATOR, StringHelper::removeFromBeginning($path, $existingPath), 2)
+                );
+            }
+        }
+
+        return $content;
     }
 }
