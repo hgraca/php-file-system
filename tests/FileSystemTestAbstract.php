@@ -285,4 +285,40 @@ abstract class FileSystemTestAbstract extends PHPUnit_Framework_TestCase
             ['/a/dir/unexisting_dir/', DirNotFoundException::class],
         ];
     }
+
+    /**
+     * @dataProvider dataProvider_testReadDir_successful
+     */
+    public function testReadDir_successful(string $path, array $expectedResult)
+    {
+        $path = $this->getBasePath() . $path;
+        self::assertEquals($expectedResult, $this->fileSystem->readDir($path));
+    }
+
+    public function dataProvider_testReadDir_successful(): array
+    {
+        return [
+            ['/a/dir/', ['.', '..', 'an_empty_dir', 'another_dir', 'fileA', 'yet_another_dir']],
+            ['/a/dir/yet_another_dir', ['.', '..', 'fileC.php']],
+            ['/a/dir/an_empty_dir/', ['.', '..']],
+        ];
+    }
+
+    /**
+     * @dataProvider dataProvider_testReadDir_fail
+     */
+    public function testReadDir_fail(string $path, string $expectedResult)
+    {
+        $path = $this->getBasePath() . $path;
+        self::expectException($expectedResult);
+        $this->fileSystem->readDir($path);
+    }
+
+    public function dataProvider_testReadDir_fail(): array
+    {
+        return [
+            ['/a/dir/fileA', DirNotFoundException::class],
+            ['/a/dir/unexisting_dir/', DirNotFoundException::class],
+        ];
+    }
 }

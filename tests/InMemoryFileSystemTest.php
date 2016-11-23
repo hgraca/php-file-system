@@ -14,11 +14,20 @@ class InMemoryFileSystemTest extends FileSystemTestAbstract
             'fileSystem',
             [
                 '/a/dir/'                          => InMemoryFileSystem::DIR_DISCRIMINATOR,
+                '/a/dir/.'                         => InMemoryFileSystem::DIR_DISCRIMINATOR,
+                '/a/dir/..'                        => InMemoryFileSystem::DIR_DISCRIMINATOR,
                 '/a/dir/fileA'                     => self::FILE_A_CONTENTS,
                 '/a/dir/another_dir/'              => InMemoryFileSystem::DIR_DISCRIMINATOR,
+                '/a/dir/another_dir/.'             => InMemoryFileSystem::DIR_DISCRIMINATOR,
+                '/a/dir/another_dir/..'            => InMemoryFileSystem::DIR_DISCRIMINATOR,
                 '/a/dir/another_dir/fileB'         => self::FILE_B_CONTENTS,
                 '/a/dir/yet_another_dir/'          => InMemoryFileSystem::DIR_DISCRIMINATOR,
+                '/a/dir/yet_another_dir/.'         => InMemoryFileSystem::DIR_DISCRIMINATOR,
+                '/a/dir/yet_another_dir/..'        => InMemoryFileSystem::DIR_DISCRIMINATOR,
                 '/a/dir/yet_another_dir/fileC.php' => self::FILE_C_CONTENTS,
+                '/a/dir/an_empty_dir/'             => InMemoryFileSystem::DIR_DISCRIMINATOR,
+                '/a/dir/an_empty_dir/.'            => InMemoryFileSystem::DIR_DISCRIMINATOR,
+                '/a/dir/an_empty_dir/..'           => InMemoryFileSystem::DIR_DISCRIMINATOR,
             ]
         );
     }

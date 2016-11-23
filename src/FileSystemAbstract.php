@@ -199,7 +199,11 @@ abstract class FileSystemAbstract implements FileSystemInterface
             throw new DirNotFoundException("Dir not found: '$path'");
         }
 
-        return $this->readDirRaw($path);
+        $result = $this->readDirRaw($path);
+
+        sort($result);
+
+        return $result;
     }
 
     /**

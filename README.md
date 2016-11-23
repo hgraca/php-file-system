@@ -13,7 +13,6 @@ composer require hgraca/file-system
 
 ## Todo
 
-- Create the tests for `FileSystemAbstract::readDir`
 - Create the tests for `FileSystemAbstract::copy`
 - Create the tests for `FileSystemAbstract::linkExists`
 - Create the tests for `FileSystemAbstract::copyLink`

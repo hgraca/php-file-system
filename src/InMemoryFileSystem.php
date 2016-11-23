@@ -76,15 +76,23 @@ class InMemoryFileSystem extends FileSystemAbstract
      */
     protected function readDirRaw(string $path): array
     {
-        $content = [];
+        $dirContent = [];
         foreach ($this->fileSystem as $existingPath => $content) {
             if (StringHelper::hasBeginning($path, $existingPath)) {
-                $content[] = current(
+                $dirContent[] = current(
                     explode(DIRECTORY_SEPARATOR, StringHelper::removeFromBeginning($path, $existingPath), 2)
                 );
             }
         }
 
-        return $content;
+        return array_values(
+            array_filter(
+                array_unique($dirContent),
+                function ($v) {
+                    return $v !== '';
+                },
+                ARRAY_FILTER_USE_BOTH
+            )
+        );
     }
 }
