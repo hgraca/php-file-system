@@ -66,7 +66,7 @@ class LocalFileSystem extends FileSystemAbstract
             if ($file->isDir()) {
                 rmdir($file->getRealPath());
             } else {
-                unlink($file->getRealPath());
+                unlink($file->getPathname());
             }
         }
 

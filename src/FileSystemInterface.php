@@ -47,6 +47,8 @@ interface FileSystemInterface
 
     public function createLink(string $path, string $targetPath): bool;
 
+    public function getLinkTarget(string $path): string;
+
     /**
      * Creates a folder and all intermediate folders idf they don't exist
      *
@@ -73,4 +75,6 @@ interface FileSystemInterface
      * If the destination exists, it will be completely replaced.
      */
     public function copy(string $sourcePath, string $destinationPath): bool;
+
+    public function getAbsolutePath(string $path): string;
 }

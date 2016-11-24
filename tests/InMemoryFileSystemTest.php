@@ -13,6 +13,10 @@ class InMemoryFileSystemTest extends FileSystemTestAbstract
             $this->fileSystem,
             'fileSystem',
             [
+                '/a/'                              => InMemoryFileSystem::DIR_DISCRIMINATOR,
+                '/a/.'                             => InMemoryFileSystem::DIR_DISCRIMINATOR,
+                '/a/..'                            => InMemoryFileSystem::DIR_DISCRIMINATOR,
+                '/a/fileB.ln'                      => InMemoryFileSystem::LINK_DISCRIMINATOR . '/a/dir/another_dir/fileB',
                 '/a/dir/'                          => InMemoryFileSystem::DIR_DISCRIMINATOR,
                 '/a/dir/.'                         => InMemoryFileSystem::DIR_DISCRIMINATOR,
                 '/a/dir/..'                        => InMemoryFileSystem::DIR_DISCRIMINATOR,

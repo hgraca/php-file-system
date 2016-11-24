@@ -18,6 +18,7 @@ class LocalFileSystemTest extends FileSystemTestAbstract
         file_put_contents(self::$TMP_FOLDER . '/a/dir/fileA', self::FILE_A_CONTENTS);
         file_put_contents(self::$TMP_FOLDER . '/a/dir/another_dir/fileB', self::FILE_B_CONTENTS);
         file_put_contents(self::$TMP_FOLDER . '/a/dir/yet_another_dir/fileC.php', self::FILE_C_CONTENTS);
+        symlink(self::$TMP_FOLDER . '/a/dir/another_dir/fileB', self::$TMP_FOLDER . '/a/fileB.ln');
 
         if (! $this->fileSystem->dirExists(self::$TMP_FOLDER)) {
             throw new \Exception("The tmp directory used for testing could not be created!");

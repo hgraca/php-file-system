@@ -13,10 +13,4 @@ composer require hgraca/file-system
 
 ## Todo
 
-- Create the tests for `FileSystemAbstract::copy`
-- Create the tests for `FileSystemAbstract::linkExists`
-- Create the tests for `FileSystemAbstract::copyLink`
-- Create the tests for `FileSystemAbstract::createLink`
-- Create the tests for `FileSystemAbstract::getLinkTarget`
-- Create the tests for `FileSystemAbstract::getAbsolutePath`
 - Change structure from inheritance into composition

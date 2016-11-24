@@ -40,9 +40,6 @@ abstract class FileSystemAbstract implements FileSystemInterface
         return $this->dirExistsRaw($this->sanitizeDirPath($path));
     }
 
-    /**
-     * TODO create the tests for linkExists
-     */
     public function linkExists(string $path): bool
     {
         return $this->linkExistsRaw($this->sanitizeFilePath($path));
@@ -120,20 +117,18 @@ abstract class FileSystemAbstract implements FileSystemInterface
         return ! $this->fileExists($path);
     }
 
-    /**
-     * TODO create the tests for copyLink
-     */
     public function copyLink(string $path, string $toPath): bool
     {
+        if (! $this->linkExists($path)) {
+            throw new FileNotFoundException("Link not found: '$path'");
+        }
+
         return $this->createLink($toPath, $this->getLinkTarget($path));
     }
 
-    /**
-     * TODO create the tests for createLink
-     */
     public function createLink(string $path, string $targetPath): bool
     {
-        $path = $this->sanitizeDirPath($path);
+        $path = $this->sanitizeFilePath($path);
 
         $fileExists = $this->fileExists($path);
         $linkExists = $this->linkExists($path);
@@ -148,10 +143,7 @@ abstract class FileSystemAbstract implements FileSystemInterface
         return $this->linkExists($path);
     }
 
-    /**
-     * TODO create the tests for getLinkTarget
-     */
-    protected function getLinkTarget(string $path): string
+    public function getLinkTarget(string $path): string
     {
         if (! $this->linkExists($path)) {
             throw new FileNotFoundException("Link not found: '$path'");
@@ -189,7 +181,6 @@ abstract class FileSystemAbstract implements FileSystemInterface
 
     /**
      * @return string[] The array with the file and dir names
-     * TODO create the tests for readDir
      */
     public function readDir(string $path): array
     {
@@ -206,9 +197,6 @@ abstract class FileSystemAbstract implements FileSystemInterface
         return $result;
     }
 
-    /**
-     * TODO create the tests for copy
-     */
     public function copy(string $sourcePath, string $destinationPath): bool
     {
         if ($sourcePath === $destinationPath) {
@@ -238,16 +226,16 @@ abstract class FileSystemAbstract implements FileSystemInterface
                 continue;
             }
 
-            $this->copy("$sourcePath/$fileName", "$destinationPath/$fileName");
+            $this->copy(
+                $this->sanitizeDirPath($sourcePath) . $fileName,
+                $this->sanitizeDirPath($destinationPath) . $fileName
+            );
         }
 
         return true;
     }
 
-    /**
-     * TODO Create the tests for FileSystemAbstract::getAbsolutePath
-     */
-    public function getAbsolutePath($path): string
+    public function getAbsolutePath(string $path): string
     {
         $path      = str_replace(['/', '\\'], DIRECTORY_SEPARATOR, $path);
         $parts     = array_filter(explode(DIRECTORY_SEPARATOR, $path), 'strlen');
@@ -263,7 +251,7 @@ abstract class FileSystemAbstract implements FileSystemInterface
             }
         }
 
-        return implode(DIRECTORY_SEPARATOR, $absolutes);
+        return DIRECTORY_SEPARATOR . implode(DIRECTORY_SEPARATOR, $absolutes);
     }
 
     /**
@@ -287,6 +275,6 @@ abstract class FileSystemAbstract implements FileSystemInterface
      */
     protected function sanitizePath(string $path): string
     {
-        return '/' . $this->getAbsolutePath(trim($path, " \t\n\r\0\x0B\\/"));
+        return $this->getAbsolutePath(trim($path, " \t\n\r\0\x0B\\/"));
     }
 }

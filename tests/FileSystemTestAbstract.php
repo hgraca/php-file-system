@@ -139,7 +139,7 @@ abstract class FileSystemTestAbstract extends PHPUnit_Framework_TestCase
      */
     public function testCopyFile_successful(string $sourcePath, string $destinationPath)
     {
-        $sourcePath = $this->getBasePath() . $sourcePath;
+        $sourcePath      = $this->getBasePath() . $sourcePath;
         $destinationPath = $this->getBasePath() . $destinationPath;
 
         self::assertTrue($this->fileSystem->copyFile($sourcePath, $destinationPath));
@@ -320,5 +320,145 @@ abstract class FileSystemTestAbstract extends PHPUnit_Framework_TestCase
             ['/a/dir/fileA', DirNotFoundException::class],
             ['/a/dir/unexisting_dir/', DirNotFoundException::class],
         ];
+    }
+
+    /**
+     * @dataProvider dataProvider_test_linkExists
+     */
+    public function test_linkExists(string $path, string $expectedResult)
+    {
+        $path = $this->getBasePath() . $path;
+        self::assertEquals($expectedResult, $this->fileSystem->linkExists($path));
+    }
+
+    public function dataProvider_test_linkExists(): array
+    {
+        return [
+            ['/a/fileB.ln', true],
+            ['/a/dir/fileA', false],
+            ['/a/dir/unexisting_dir/', false],
+        ];
+    }
+
+    /**
+     * @dataProvider dataProvider_test_copyLink
+     */
+    public function test_copyLink(string $sourcePath, string $destinationPath, string $expectedException = null)
+    {
+        $sourcePath      = $this->getBasePath() . $sourcePath;
+        $destinationPath = $this->getBasePath() . $destinationPath;
+
+        if ($expectedException) {
+            self::expectException($expectedException);
+        }
+
+        $this->fileSystem->copyLink($sourcePath, $destinationPath);
+
+        self::assertTrue($this->fileSystem->linkExists($destinationPath));
+        self::assertEquals(
+            $this->fileSystem->getLinkTarget($sourcePath),
+            $this->fileSystem->getLinkTarget($destinationPath)
+        );
+    }
+
+    public function dataProvider_test_copyLink(): array
+    {
+        return [
+            ['/a/fileB.ln', '/a/fileB.copy.ln', null],
+            ['/a/dir/fileA', '/a/dir/fileA.copy.ln', FileNotFoundException::class],
+            ['/a/fileB.ln', '/a/fileB.ln', FileSystemException::class],
+            ['/a/fileB.ln', '/a/dir/fileA', FileSystemException::class],
+            ['/a/fileB.ln', '/a/dir', FileSystemException::class],
+        ];
+    }
+
+    /**
+     * @dataProvider dataProvider_test_createLink
+     */
+    public function test_createLink(string $path, string $targetPath, string $expectedException = null)
+    {
+        $path       = $this->getBasePath() . $path;
+        $targetPath = $this->getBasePath() . $targetPath;
+
+        if ($expectedException) {
+            self::expectException($expectedException);
+        }
+
+        $this->fileSystem->createLink($path, $targetPath);
+
+        self::assertTrue($this->fileSystem->linkExists($path));
+        self::assertEquals($targetPath, $this->fileSystem->getLinkTarget($path));
+    }
+
+    public function dataProvider_test_createLink(): array
+    {
+        return [
+            ['/a/fileC.ln', '/a/dir/yet_another_dir/fileC.php', null],
+            ['/a/fileB.ln', '/a/dir/yet_another_dir/fileC.php', FileSystemException::class],
+            ['/a/dir/fileA', '/a/dir/yet_another_dir/fileC.php', FileSystemException::class],
+            ['/a/dir', '/a/dir/yet_another_dir/fileC.php', FileSystemException::class],
+        ];
+    }
+
+    /**
+     * @dataProvider dataProvider_test_getLinkTarget
+     */
+    public function test_getLinkTarget(string $path, string $targetPath, string $expectedException = null)
+    {
+        $path       = $this->getBasePath() . $path;
+        $targetPath = $this->getBasePath() . $targetPath;
+
+        if ($expectedException) {
+            self::expectException($expectedException);
+        }
+
+        self::assertEquals($targetPath, $this->fileSystem->getLinkTarget($path));
+    }
+
+    public function dataProvider_test_getLinkTarget(): array
+    {
+        return [
+            ['/a/fileB.ln', '/a/dir/another_dir/fileB', null],
+            ['/a/fileC.ln', '', FileNotFoundException::class],
+            ['/a/dir/fileA', '', FileNotFoundException::class],
+            ['/a/dir', '', FileNotFoundException::class],
+        ];
+    }
+
+    /**
+     * @dataProvider dataProvider_test_getAbsolutePath
+     */
+    public function test_getAbsolutePath(string $path, string $expectedResult)
+    {
+        $path           = $this->getBasePath() . $path;
+        $expectedResult = $this->getBasePath() . $expectedResult;
+
+        self::assertEquals($expectedResult, $this->fileSystem->getAbsolutePath($path));
+    }
+
+    public function dataProvider_test_getAbsolutePath(): array
+    {
+        return [
+            ['/a/dir/../fileA', '/a/fileA'],
+            ['/a/dir/../../fileA', '/fileA'],
+            ['/a/dir/.././fileA', '/a/fileA'],
+        ];
+    }
+
+    public function test_copy()
+    {
+        $path       = $this->getBasePath() . '/a/';
+        $targetPath = $this->getBasePath() . '/b/';
+
+        $this->fileSystem->copy($path, $targetPath);
+
+        self::assertTrue($this->fileSystem->linkExists($this->getBasePath() . '/b/fileB.ln'));
+        self::assertTrue($this->fileSystem->fileExists($this->getBasePath() . '/b/dir/fileA'));
+        self::assertTrue($this->fileSystem->dirExists($this->getBasePath() . '/b/dir/'));
+        self::assertTrue($this->fileSystem->dirExists($this->getBasePath() . '/b/dir/another_dir/'));
+        self::assertTrue($this->fileSystem->fileExists($this->getBasePath() . '/b/dir/another_dir/fileB'));
+        self::assertTrue($this->fileSystem->dirExists($this->getBasePath() . '/b/dir/yet_another_dir/'));
+        self::assertTrue($this->fileSystem->fileExists($this->getBasePath() . '/b/dir/yet_another_dir/fileC.php'));
+        self::assertTrue($this->fileSystem->dirExists($this->getBasePath() . '/b/dir/an_empty_dir/'));
     }
 }
