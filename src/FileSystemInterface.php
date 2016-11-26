@@ -3,8 +3,8 @@ namespace Hgraca\FileSystem;
 
 use Hgraca\FileSystem\Exception\DirNotFoundException;
 use Hgraca\FileSystem\Exception\FileNotFoundException;
-use Hgraca\FileSystem\Exception\FileSystemException;
 use Hgraca\FileSystem\Exception\InvalidPathException;
+use Hgraca\FileSystem\Exception\PathAlreadyExistsException;
 
 interface FileSystemInterface
 {
@@ -30,7 +30,7 @@ interface FileSystemInterface
     public function readFile(string $path): string;
 
     /**
-     * @throws FileSystemException
+     * @throws PathAlreadyExistsException
      * @throws InvalidPathException
      */
     public function writeFile(string $path, string $content);
@@ -53,7 +53,7 @@ interface FileSystemInterface
      * Creates a folder and all intermediate folders idf they don't exist
      *
      * @throws InvalidPathException
-     * @throws FileSystemException
+     * @throws PathAlreadyExistsException
      */
     public function createDir(string $path): bool;
 
