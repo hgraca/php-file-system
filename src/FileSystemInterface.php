@@ -1,10 +1,11 @@
 <?php
 namespace Hgraca\FileSystem;
 
-use Hgraca\FileSystem\Exception\DirNotFoundException;
 use Hgraca\FileSystem\Exception\FileNotFoundException;
 use Hgraca\FileSystem\Exception\InvalidPathException;
-use Hgraca\FileSystem\Exception\PathAlreadyExistsException;
+use Hgraca\FileSystem\Exception\PathIsDirException;
+use Hgraca\FileSystem\Exception\PathIsFileException;
+use Hgraca\FileSystem\Exception\PathIsLinkException;
 
 interface FileSystemInterface
 {
@@ -30,21 +31,27 @@ interface FileSystemInterface
     public function readFile(string $path): string;
 
     /**
-     * @throws PathAlreadyExistsException
+     * @throws PathIsDirException
      * @throws InvalidPathException
      */
     public function writeFile(string $path, string $content);
 
+    /**
+     * @throws PathIsDirException
+     */
     public function copyFile(string $sourcePath, string $destinationPath): bool;
 
     /**
-     * @throws FileNotFoundException
      * @throws InvalidPathException
      */
     public function deleteFile(string $path): bool;
 
     public function copyLink(string $path, string $toPath): bool;
 
+    /**
+     * @throws PathIsDirException
+     * @throws PathIsFileException
+     */
     public function createLink(string $path, string $targetPath): bool;
 
     public function getLinkTarget(string $path): string;
@@ -53,14 +60,14 @@ interface FileSystemInterface
      * Creates a folder and all intermediate folders idf they don't exist
      *
      * @throws InvalidPathException
-     * @throws PathAlreadyExistsException
+     * @throws PathIsFileException
+     * @throws PathIsLinkException
      */
     public function createDir(string $path): bool;
 
     /**
      * Deletes a folder and all its contents
      *
-     * @throws DirNotFoundException
      * @throws InvalidPathException
      */
     public function deleteDir(string $path): bool;

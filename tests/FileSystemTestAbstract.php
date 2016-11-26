@@ -4,6 +4,9 @@ namespace Hgraca\FileSystem\Test;
 use Hgraca\FileSystem\Exception\DirNotFoundException;
 use Hgraca\FileSystem\Exception\FileNotFoundException;
 use Hgraca\FileSystem\Exception\FileSystemException;
+use Hgraca\FileSystem\Exception\PathIsDirException;
+use Hgraca\FileSystem\Exception\PathIsFileException;
+use Hgraca\FileSystem\Exception\PathIsLinkException;
 use Hgraca\FileSystem\FileSystemInterface;
 use PHPUnit_Framework_TestCase;
 
@@ -244,9 +247,9 @@ abstract class FileSystemTestAbstract extends PHPUnit_Framework_TestCase
     public function dataProvider_testCreateDir_fail(): array
     {
         return [
-            ['/a/dir', FileSystemException::class],
-            ['/a/dir/yet_another_dir', FileSystemException::class],
-            ['/a/dir/yet_another_dir/fileC.php', FileSystemException::class],
+            ['/a/dir', PathIsDirException::class],
+            ['/a/fileB.ln', PathIsLinkException::class],
+            ['/a/dir/yet_another_dir/fileC.php', PathIsFileException::class],
         ];
     }
 

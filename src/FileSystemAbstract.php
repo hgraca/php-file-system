@@ -4,10 +4,17 @@ namespace Hgraca\FileSystem;
 use Hgraca\FileSystem\Exception\DirNotFoundException;
 use Hgraca\FileSystem\Exception\FileNotFoundException;
 use Hgraca\FileSystem\Exception\InvalidPathException;
-use Hgraca\FileSystem\Exception\PathAlreadyExistsException;
+use Hgraca\FileSystem\Exception\PathIsDirException;
+use Hgraca\FileSystem\Exception\PathIsFileException;
+use Hgraca\FileSystem\Exception\PathIsLinkException;
 
 abstract class FileSystemAbstract implements FileSystemInterface
 {
+    const STRICT     = 0;
+    const IDEMPOTENT = 1;
+
+    private $mode;
+
     abstract protected function dirExistsRaw(string $path): bool;
 
     abstract protected function linkExistsRaw(string $path): bool;
@@ -35,6 +42,11 @@ abstract class FileSystemAbstract implements FileSystemInterface
      */
     abstract protected function readDirRaw(string $path): array;
 
+    public function __construct(int $mode = self::STRICT)
+    {
+        $this->mode = $mode;
+    }
+
     public function dirExists(string $path): bool
     {
         return $this->dirExistsRaw($this->sanitizeDirPath($path));
@@ -47,7 +59,9 @@ abstract class FileSystemAbstract implements FileSystemInterface
 
     public function fileExists(string $path): bool
     {
-        return $this->fileExistsRaw($this->sanitizeFilePath($path));
+        $path = $this->sanitizeFilePath($path);
+
+        return $this->fileExistsRaw($path) && ! $this->linkExists($path);
     }
 
     public function readFile(string $path): string
@@ -66,7 +80,7 @@ abstract class FileSystemAbstract implements FileSystemInterface
         $path = $this->sanitizeFilePath($path);
 
         if ($this->dirExists($path)) {
-            throw new PathAlreadyExistsException("The path '$path' already exists and is a dir.");
+            throw new PathIsDirException("The path '$path' already exists and is a dir.");
         }
 
         $dirPath = dirname($path);
@@ -91,9 +105,7 @@ abstract class FileSystemAbstract implements FileSystemInterface
         }
 
         if ($this->dirExists($destinationPath)) {
-            throw new PathAlreadyExistsException(
-                "The destination path '$destinationPath' already exists and is a dir."
-            );
+            throw new PathIsDirException("The destination path '$destinationPath' already exists and is a dir.");
         }
 
         $dirPath = dirname($destinationPath);
@@ -110,11 +122,15 @@ abstract class FileSystemAbstract implements FileSystemInterface
     {
         $path = $this->sanitizeFilePath($path);
 
-        if (! $this->fileExists($path)) {
+        $fileExists = $this->fileExists($path);
+
+        if ($this->isStrictMode() && ! $fileExists) {
             throw new FileNotFoundException("File not found: '$path'");
         }
 
-        $this->deleteFileRaw($path);
+        if ($fileExists) {
+            $this->deleteFileRaw($path);
+        }
 
         return ! $this->fileExists($path);
     }
@@ -132,12 +148,15 @@ abstract class FileSystemAbstract implements FileSystemInterface
     {
         $path = $this->sanitizeFilePath($path);
 
-        $fileExists = $this->fileExists($path);
-        $linkExists = $this->linkExists($path);
-        if ($fileExists || $linkExists || $this->dirExists($path)) {
-            throw new PathAlreadyExistsException(
-                "The path '$path' already exists and is a " . ($fileExists ? 'file.' : $linkExists ? 'link.' : 'dir.')
-            );
+        if ($this->linkExists($path)) {
+            $this->deleteFile($path);
+        }
+
+        if ($this->fileExists($path)) {
+            throw new PathIsFileException("The path '$path' already exists and is a file");
+        }
+        if ($this->dirExists($path)) {
+            throw new PathIsDirException("The path '$path' already exists and is a dir");
         }
 
         $this->createLinkRaw($path, $targetPath);
@@ -158,30 +177,38 @@ abstract class FileSystemAbstract implements FileSystemInterface
     {
         $path = $this->sanitizeDirPath($path);
 
-        $fileExists = $this->fileExists($path);
-        if ($fileExists || $this->dirExists($path)) {
-            throw new PathAlreadyExistsException(
-                "The path '$path' already exists and is a " . ($fileExists ? 'file.' : 'dir.')
-            );
+        if ($this->linkExists($path)) {
+            throw new PathIsLinkException("The path '$path' already exists and is a file");
         }
 
-        $this->createDirRaw($path);
+        if ($this->fileExists($path)) {
+            throw new PathIsFileException("The path '$path' already exists and is a file");
+        }
+
+        $dirExists = $this->dirExists($path);
+        if ($this->isStrictMode() && $dirExists) {
+            throw new PathIsDirException("The path '$path' already exists and is a dir");
+        }
+
+        if (! $dirExists) {
+            $this->createDirRaw($path);
+        }
 
         return $this->dirExists($path);
     }
 
-    /**
-     * @throws DirNotFoundException
-     */
     public function deleteDir(string $path): bool
     {
         $path = $this->sanitizeDirPath($path);
 
-        if (! $this->dirExists($path)) {
-            throw new DirNotFoundException("Dir not found: '$path'");
+        $dirExists = $this->dirExists($path);
+        if ($this->isStrictMode() && !$dirExists) {
+            throw new DirNotFoundException();
         }
 
-        $this->deleteDirRaw($path);
+        if ($dirExists) {
+            $this->deleteDirRaw($path);
+        }
 
         return ! $this->dirExists($path);
     }
@@ -285,5 +312,10 @@ abstract class FileSystemAbstract implements FileSystemInterface
     protected function sanitizePath(string $path): string
     {
         return $this->getAbsolutePath(trim($path, " \t\n\r\0\x0B\\/"));
+    }
+
+    private function isStrictMode(): bool
+    {
+        return $this->mode === self::STRICT;
     }
 }
