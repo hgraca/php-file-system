@@ -54,7 +54,9 @@ class LocalFileSystem extends FileSystemAbstract
 
     public function createDirRaw(string $path)
     {
+        $oldUmask = umask(0);
         mkdir($path, 0777, true);
+        umask($oldUmask);
     }
 
     public function deleteDirRaw(string $path)
