@@ -1,6 +1,6 @@
 <?php
 namespace Hgraca\FileSystem\Exception;
 
-class PathIsFileException extends FileSystemException
+class PathIsFileException extends PathAlreadyExistsException
 {
 }

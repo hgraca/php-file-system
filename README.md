@@ -14,6 +14,14 @@ To install the library, run the command below and you will get the latest versio
 composer require hgraca/file-system
 ```
 
+## Usage
+
+Simply instantiate one of the concrete classes and use.
+
+There are 2 modes:
+  - Strict: ie, If we try to delete a folder that does not exist, it throws an exception
+  - Idempotent: ie, If we try to delete a folder that does not exist, it DOES NOT throw an exception
+
 ## Todo
 
 - Change structure from inheritance into composition
