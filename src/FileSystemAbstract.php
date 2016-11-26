@@ -136,7 +136,7 @@ abstract class FileSystemAbstract implements FileSystemInterface
         $linkExists = $this->linkExists($path);
         if ($fileExists || $linkExists || $this->dirExists($path)) {
             throw new PathAlreadyExistsException(
-                "The path '$path' already exists and is a " . $fileExists ? 'file.' : $linkExists ? 'link.' : 'dir.'
+                "The path '$path' already exists and is a " . ($fileExists ? 'file.' : $linkExists ? 'link.' : 'dir.')
             );
         }
 
@@ -161,7 +161,7 @@ abstract class FileSystemAbstract implements FileSystemInterface
         $fileExists = $this->fileExists($path);
         if ($fileExists || $this->dirExists($path)) {
             throw new PathAlreadyExistsException(
-                "The path '$path' already exists and is a " . $fileExists ? 'file.' : 'dir.'
+                "The path '$path' already exists and is a " . ($fileExists ? 'file.' : 'dir.')
             );
         }
 
