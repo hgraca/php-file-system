@@ -3,8 +3,8 @@ namespace Hgraca\FileSystem;
 
 use Hgraca\FileSystem\Exception\DirNotFoundException;
 use Hgraca\FileSystem\Exception\FileNotFoundException;
-use Hgraca\FileSystem\Exception\FileSystemException;
 use Hgraca\FileSystem\Exception\InvalidPathException;
+use Hgraca\FileSystem\Exception\PathAlreadyExistsException;
 
 abstract class FileSystemAbstract implements FileSystemInterface
 {
@@ -66,7 +66,7 @@ abstract class FileSystemAbstract implements FileSystemInterface
         $path = $this->sanitizeFilePath($path);
 
         if ($this->dirExists($path)) {
-            throw new FileSystemException("The path '$path' already exists and is a dir.");
+            throw new PathAlreadyExistsException("The path '$path' already exists and is a dir.");
         }
 
         $dirPath = dirname($path);
@@ -79,7 +79,7 @@ abstract class FileSystemAbstract implements FileSystemInterface
 
     public function copyFile(string $sourcePath, string $destinationPath): bool
     {
-        $sourcePath = $this->sanitizeFilePath($sourcePath);
+        $sourcePath      = $this->sanitizeFilePath($sourcePath);
         $destinationPath = $this->sanitizeFilePath($destinationPath);
 
         if (! $this->fileExists($sourcePath)) {
@@ -91,7 +91,9 @@ abstract class FileSystemAbstract implements FileSystemInterface
         }
 
         if ($this->dirExists($destinationPath)) {
-            throw new FileSystemException("The destination path '$destinationPath' already exists and is a dir.");
+            throw new PathAlreadyExistsException(
+                "The destination path '$destinationPath' already exists and is a dir."
+            );
         }
 
         $dirPath = dirname($destinationPath);
@@ -133,7 +135,7 @@ abstract class FileSystemAbstract implements FileSystemInterface
         $fileExists = $this->fileExists($path);
         $linkExists = $this->linkExists($path);
         if ($fileExists || $linkExists || $this->dirExists($path)) {
-            throw new FileSystemException(
+            throw new PathAlreadyExistsException(
                 "The path '$path' already exists and is a " . $fileExists ? 'file.' : $linkExists ? 'link.' : 'dir.'
             );
         }
@@ -158,7 +160,9 @@ abstract class FileSystemAbstract implements FileSystemInterface
 
         $fileExists = $this->fileExists($path);
         if ($fileExists || $this->dirExists($path)) {
-            throw new FileSystemException("The path '$path' already exists and is a " . $fileExists ? 'file.' : 'dir.');
+            throw new PathAlreadyExistsException(
+                "The path '$path' already exists and is a " . $fileExists ? 'file.' : 'dir.'
+            );
         }
 
         $this->createDirRaw($path);
@@ -166,6 +170,9 @@ abstract class FileSystemAbstract implements FileSystemInterface
         return $this->dirExists($path);
     }
 
+    /**
+     * @throws DirNotFoundException
+     */
     public function deleteDir(string $path): bool
     {
         $path = $this->sanitizeDirPath($path);
@@ -180,6 +187,8 @@ abstract class FileSystemAbstract implements FileSystemInterface
     }
 
     /**
+     * @throws DirNotFoundException
+     *
      * @return string[] The array with the file and dir names
      */
     public function readDir(string $path): array
