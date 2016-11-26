@@ -24,4 +24,5 @@ There are 2 modes:
 
 ## Todo
 
+- Add tests for the Idempotent mode
 - Change structure from inheritance into composition
