@@ -2,6 +2,10 @@
 ############
 bin
 
+# Phpunit #
+############
+/clover.xml
+
 # Composer #
 ############
 composer.phar
