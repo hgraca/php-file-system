@@ -22,6 +22,11 @@ class LocalFileSystem extends FileSystemAbstract
         return file_exists($path) && is_file($path);
     }
 
+    protected function getFileCreationTimestampRaw(string $path): int
+    {
+        return filectime($path);
+    }
+
     protected function readFileRaw(string $path): string
     {
         return file_get_contents($path);

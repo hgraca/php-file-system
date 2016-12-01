@@ -13,8 +13,11 @@ use PHPUnit_Framework_TestCase;
 abstract class FileSystemTestAbstract extends PHPUnit_Framework_TestCase
 {
     const FILE_A_CONTENTS = 'file A contents';
+    const FILE_A_CREATION_TIME = 123456789;
     const FILE_B_CONTENTS = 'file B contents';
+    const FILE_B_CREATION_TIME = 123456790;
     const FILE_C_CONTENTS = 'file C contents';
+    const FILE_C_CREATION_TIME = 123456791;
     const FILE_Z_CONTENTS = 'file Z contents';
 
     /** @var FileSystemInterface */

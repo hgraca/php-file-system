@@ -21,6 +21,8 @@ abstract class FileSystemAbstract implements FileSystemInterface
 
     abstract protected function fileExistsRaw(string $path): bool;
 
+    abstract protected function getFileCreationTimestampRaw(string $path): int;
+
     abstract protected function readFileRaw(string $path): string;
 
     abstract protected function writeFileRaw(string $path, string $content);
@@ -62,6 +64,17 @@ abstract class FileSystemAbstract implements FileSystemInterface
         $path = $this->sanitizeFilePath($path);
 
         return $this->fileExistsRaw($path) && ! $this->linkExists($path);
+    }
+
+    public function getFileCreationTimestamp(string $path): int
+    {
+        $path = $this->sanitizeFilePath($path);
+
+        if (! $this->fileExists($path)) {
+            throw new FileNotFoundException("File not found: '$path'");
+        }
+
+        return $this->getFileCreationTimestampRaw($path);
     }
 
     public function readFile(string $path): string

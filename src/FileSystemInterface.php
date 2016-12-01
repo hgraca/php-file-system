@@ -24,6 +24,8 @@ interface FileSystemInterface
      */
     public function fileExists(string $path): bool;
 
+    public function getFileCreationTimestamp(string $path): int;
+
     /**
      * @throws FileNotFoundException
      * @throws InvalidPathException

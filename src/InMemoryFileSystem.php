@@ -5,36 +5,58 @@ use Hgraca\Helper\StringHelper;
 
 class InMemoryFileSystem extends FileSystemAbstract
 {
-    const DIR_DISCRIMINATOR = 'dir';
-    const LINK_DISCRIMINATOR = '@->';
+    const DIR_DISCRIMINATOR  = 'dir';
+    const LINK_DISCRIMINATOR = 'link';
+    const FILE_DISCRIMINATOR = 'file';
+
+    const KEY_TYPE          = 'type';
+    const KEY_CONTENT       = 'content';
+    const KEY_CREATION_TIME = 'creation_time';
 
     /** @var array */
     private $fileSystem = [];
 
     protected function dirExistsRaw(string $path): bool
     {
-        return array_key_exists($path, $this->fileSystem) && $this->fileSystem[$path] === self::DIR_DISCRIMINATOR;
+        return array_key_exists(
+                $path,
+                $this->fileSystem
+            ) && $this->fileSystem[$path][self::KEY_TYPE] === self::DIR_DISCRIMINATOR;
     }
 
     protected function linkExistsRaw(string $path): bool
     {
-        return array_key_exists($path, $this->fileSystem)
-        && StringHelper::hasBeginning(self::LINK_DISCRIMINATOR, $this->fileSystem[$path]);
+        return array_key_exists(
+                $path,
+                $this->fileSystem
+            ) && $this->fileSystem[$path][self::KEY_TYPE] === self::LINK_DISCRIMINATOR;
     }
 
     protected function fileExistsRaw(string $path): bool
     {
-        return array_key_exists($path, $this->fileSystem) && $this->fileSystem[$path] !== self::DIR_DISCRIMINATOR;
+        return array_key_exists(
+                $path,
+                $this->fileSystem
+            ) && $this->fileSystem[$path][self::KEY_TYPE] === self::FILE_DISCRIMINATOR;
+    }
+
+    protected function getFileCreationTimestampRaw(string $path): int
+    {
+        return $this->fileSystem[$path][self::KEY_CREATION_TIME];
     }
 
     protected function readFileRaw(string $path): string
     {
-        return $this->fileSystem[$path];
+        return $this->fileSystem[$path][self::KEY_CONTENT];
     }
 
     protected function writeFileRaw(string $path, string $content)
     {
-        $this->fileSystem[$path] = $content;
+        $this->fileSystem[$path] = [
+            self::KEY_TYPE          => self::FILE_DISCRIMINATOR,
+            self::KEY_CONTENT       => $content,
+            self::KEY_CREATION_TIME => time(),
+        ];
     }
 
     protected function copyFileRaw(string $sourcePath, string $destinationPath)
@@ -49,17 +71,22 @@ class InMemoryFileSystem extends FileSystemAbstract
 
     protected function createLinkRaw(string $path, string $targetPath)
     {
-        $this->fileSystem[$path] = self::LINK_DISCRIMINATOR . $targetPath;
+        $this->fileSystem[$path] = [
+            self::KEY_TYPE    => self::LINK_DISCRIMINATOR,
+            self::KEY_CONTENT => $targetPath,
+        ];
     }
 
     protected function getLinkTargetRaw(string $path): string
     {
-        return StringHelper::removeFromBeginning(self::LINK_DISCRIMINATOR, $this->fileSystem[$path]);
+        return $this->fileSystem[$path][self::KEY_CONTENT];
     }
 
     protected function createDirRaw(string $path)
     {
-        $this->fileSystem[$path] = self::DIR_DISCRIMINATOR;
+        $this->fileSystem[$path] = [
+            self::KEY_TYPE => self::DIR_DISCRIMINATOR,
+        ];
     }
 
     protected function deleteDirRaw(string $path)

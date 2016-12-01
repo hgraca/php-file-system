@@ -37,4 +37,10 @@ class LocalFileSystemTest extends FileSystemTestAbstract
     {
         return self::$TMP_FOLDER;
     }
+
+    public function testGetFileCreationTimestamp()
+    {
+        $path = $this->getBasePath() . '/a/dir/fileA';
+        self::assertEquals(filectime($path), $this->fileSystem->getFileCreationTimestamp($path));
+    }
 }
