@@ -1,10 +1,14 @@
-# File system library
+# Hgraca\FileSystem
 [![Build Status](https://travis-ci.org/hgraca/php-file-system.svg?branch=master)](https://travis-ci.org/hgraca/php-file-system)
 [![codecov](https://codecov.io/gh/hgraca/php-file-system/branch/master/graph/badge.svg)](https://codecov.io/gh/hgraca/php-file-system)
 
 
 A generic library that wraps file system calls. 
 It contains an in-memory file system that behaves the same as the real one, very useful for testing applications that use this little wrapper class.
+
+Please note that this is only useful for small files in a local file system.
+ - If you need to handle big files, you should use streams. 
+ - If you need to use files from multiple file systems (local, S3, RedShift, ...) I advise using [FlySystem](https://flysystem.thephpleague.com/).
 
 ## Installation
 
@@ -24,5 +28,5 @@ There are 2 modes:
 
 ## Todo
 
-- Add tests for the Idempotent mode
+- Add `shields.io` badges
 - Change structure from inheritance into composition
