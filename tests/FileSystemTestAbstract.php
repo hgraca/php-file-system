@@ -54,6 +54,15 @@ abstract class FileSystemTestAbstract extends PHPUnit_Framework_TestCase
         self::assertEquals($expectedResult, $this->fileSystem->fileExists($path));
     }
 
+    /**
+     * @expectedException \Hgraca\FileSystem\Exception\FileNotFoundException
+     */
+    public function testGetFileCreationTimestamp_ThrowsFileNotFoundException()
+    {
+        $path = $this->getBasePath() . '/a/unexisting/dir/fileK';
+        $this->fileSystem->getFileCreationTimestamp($path);
+    }
+
     public function dataProvider_testFileExists(): array
     {
         return [
@@ -456,7 +465,7 @@ abstract class FileSystemTestAbstract extends PHPUnit_Framework_TestCase
         $path       = $this->getBasePath() . '/a/';
         $targetPath = $this->getBasePath() . '/b/';
 
-        $this->fileSystem->copy($path, $targetPath);
+        self::assertTrue($this->fileSystem->copy($path, $targetPath));
 
         self::assertTrue($this->fileSystem->linkExists($this->getBasePath() . '/b/fileB.ln'));
         self::assertTrue($this->fileSystem->fileExists($this->getBasePath() . '/b/dir/fileA'));
@@ -466,5 +475,25 @@ abstract class FileSystemTestAbstract extends PHPUnit_Framework_TestCase
         self::assertTrue($this->fileSystem->dirExists($this->getBasePath() . '/b/dir/yet_another_dir/'));
         self::assertTrue($this->fileSystem->fileExists($this->getBasePath() . '/b/dir/yet_another_dir/fileC.php'));
         self::assertTrue($this->fileSystem->dirExists($this->getBasePath() . '/b/dir/an_empty_dir/'));
+    }
+
+    public function test_copy_EqualOriginAndDestination()
+    {
+        $path       = $this->getBasePath() . '/a/';
+        $targetPath = $this->getBasePath() . '/a/';
+
+        self::assertTrue($this->fileSystem->copy($path, $targetPath));
+    }
+
+    public function test_copy_DestinationFolderExists()
+    {
+        $path       = $this->getBasePath() . '/a/dir/another_dir';
+        $targetPath = $this->getBasePath() . '/b/dir/another_dir';
+
+        $this->fileSystem->writeFile($this->getBasePath() . '/b/dir/another_dir/fileK', 'bla');
+
+        self::assertTrue($this->fileSystem->copy($path, $targetPath));
+        self::assertTrue($this->fileSystem->fileExists($this->getBasePath() . '/b/dir/another_dir/fileB'));
+        self::assertFalse($this->fileSystem->fileExists($this->getBasePath() . '/b/dir/another_dir/fileK'));
     }
 }
