@@ -34,7 +34,7 @@ class LocalFileSystem extends FileSystemAbstract
 
     protected function writeFileRaw(string $path, string $content)
     {
-        file_put_contents($path, $content);
+        file_put_contents($path, $content, LOCK_EX);
     }
 
     protected function copyFileRaw(string $sourcePath, string $destinationPath)
