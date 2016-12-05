@@ -29,4 +29,5 @@ There are 2 modes:
 ## Todo
 
 - Add `shields.io` badges
+- Add a CS fixer
 - Change structure from inheritance into composition
