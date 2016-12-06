@@ -1,7 +1,12 @@
 # Hgraca\FileSystem
-[![Build Status](https://travis-ci.org/hgraca/php-file-system.svg?branch=master)](https://travis-ci.org/hgraca/php-file-system)
-[![codecov](https://codecov.io/gh/hgraca/php-file-system/branch/master/graph/badge.svg)](https://codecov.io/gh/hgraca/php-file-system)
+[![Author](http://img.shields.io/badge/author-@hgraca-blue.svg?style=flat-square)](https://www.herbertograca.com)
+[![Software License](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](LICENSE)
+[![Latest Version](https://img.shields.io/github/release/hgraca/php-file-system.svg?style=flat-square)](https://github.com/hgraca/php-file-system/releases)
+[![Total Downloads](https://img.shields.io/packagist/dt/hgraca/file-system.svg?style=flat-square)](https://packagist.org/packages/hgraca/file-system)
 
+[![Build Status](https://img.shields.io/scrutinizer/build/g/hgraca/php-file-system.svg?style=flat-square)](https://scrutinizer-ci.com/g/hgraca/php-file-system/build)
+[![Coverage Status](https://img.shields.io/scrutinizer/coverage/g/hgraca/php-file-system.svg?style=flat-square)](https://scrutinizer-ci.com/g/hgraca/php-file-system/code-structure)
+[![Quality Score](https://img.shields.io/scrutinizer/g/hgraca/php-file-system.svg?style=flat-square)](https://scrutinizer-ci.com/g/hgraca/php-file-system)
 
 A generic library that wraps file system calls. 
 It contains an in-memory file system that behaves the same as the real one, very useful for testing applications that use this little wrapper class.
