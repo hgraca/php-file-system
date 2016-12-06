@@ -1,4 +1,5 @@
 <?php
+
 namespace Hgraca\FileSystem;
 
 use Hgraca\FileSystem\Exception\DirNotFoundException;
@@ -10,7 +11,7 @@ use Hgraca\FileSystem\Exception\PathIsLinkException;
 
 abstract class FileSystemAbstract implements FileSystemInterface
 {
-    const STRICT     = 0;
+    const STRICT = 0;
     const IDEMPOTENT = 1;
 
     private $mode;
@@ -63,14 +64,14 @@ abstract class FileSystemAbstract implements FileSystemInterface
     {
         $path = $this->sanitizeFilePath($path);
 
-        return $this->fileExistsRaw($path) && ! $this->linkExists($path);
+        return $this->fileExistsRaw($path) && !$this->linkExists($path);
     }
 
     public function getFileCreationTimestamp(string $path): int
     {
         $path = $this->sanitizeFilePath($path);
 
-        if (! $this->fileExists($path)) {
+        if (!$this->fileExists($path)) {
             throw new FileNotFoundException("File not found: '$path'");
         }
 
@@ -81,7 +82,7 @@ abstract class FileSystemAbstract implements FileSystemInterface
     {
         $path = $this->sanitizeFilePath($path);
 
-        if (! $this->fileExists($path)) {
+        if (!$this->fileExists($path)) {
             throw new FileNotFoundException("File not found: '$path'");
         }
 
@@ -97,7 +98,7 @@ abstract class FileSystemAbstract implements FileSystemInterface
         }
 
         $dirPath = dirname($path);
-        if (! $this->dirExists($dirPath)) {
+        if (!$this->dirExists($dirPath)) {
             $this->createDir($dirPath);
         }
 
@@ -106,10 +107,10 @@ abstract class FileSystemAbstract implements FileSystemInterface
 
     public function copyFile(string $sourcePath, string $destinationPath): bool
     {
-        $sourcePath      = $this->sanitizeFilePath($sourcePath);
+        $sourcePath = $this->sanitizeFilePath($sourcePath);
         $destinationPath = $this->sanitizeFilePath($destinationPath);
 
-        if (! $this->fileExists($sourcePath)) {
+        if (!$this->fileExists($sourcePath)) {
             throw new FileNotFoundException("File not found: '$sourcePath'");
         }
 
@@ -122,7 +123,7 @@ abstract class FileSystemAbstract implements FileSystemInterface
         }
 
         $dirPath = dirname($destinationPath);
-        if (! $this->dirExists($dirPath)) {
+        if (!$this->dirExists($dirPath)) {
             $this->createDir($dirPath);
         }
 
@@ -137,7 +138,7 @@ abstract class FileSystemAbstract implements FileSystemInterface
 
         $fileExists = $this->fileExists($path);
 
-        if ($this->isStrictMode() && ! $fileExists) {
+        if ($this->isStrictMode() && !$fileExists) {
             throw new FileNotFoundException("File not found: '$path'");
         }
 
@@ -145,12 +146,12 @@ abstract class FileSystemAbstract implements FileSystemInterface
             $this->deleteFileRaw($path);
         }
 
-        return ! $this->fileExists($path);
+        return !$this->fileExists($path);
     }
 
     public function copyLink(string $path, string $toPath): bool
     {
-        if (! $this->linkExists($path)) {
+        if (!$this->linkExists($path)) {
             throw new FileNotFoundException("Link not found: '$path'");
         }
 
@@ -179,7 +180,7 @@ abstract class FileSystemAbstract implements FileSystemInterface
 
     public function getLinkTarget(string $path): string
     {
-        if (! $this->linkExists($path)) {
+        if (!$this->linkExists($path)) {
             throw new FileNotFoundException("Link not found: '$path'");
         }
 
@@ -203,7 +204,7 @@ abstract class FileSystemAbstract implements FileSystemInterface
             throw new PathIsDirException("The path '$path' already exists and is a dir");
         }
 
-        if (! $dirExists) {
+        if (!$dirExists) {
             $this->createDirRaw($path);
         }
 
@@ -223,7 +224,7 @@ abstract class FileSystemAbstract implements FileSystemInterface
             $this->deleteDirRaw($path);
         }
 
-        return ! $this->dirExists($path);
+        return !$this->dirExists($path);
     }
 
     /**
@@ -235,7 +236,7 @@ abstract class FileSystemAbstract implements FileSystemInterface
     {
         $path = $this->sanitizeDirPath($path);
 
-        if (! $this->dirExists($path)) {
+        if (!$this->dirExists($path)) {
             throw new DirNotFoundException("Dir not found: '$path'");
         }
 
@@ -286,8 +287,8 @@ abstract class FileSystemAbstract implements FileSystemInterface
 
     public function getAbsolutePath(string $path): string
     {
-        $path      = str_replace(['/', '\\'], DIRECTORY_SEPARATOR, $path);
-        $parts     = array_filter(explode(DIRECTORY_SEPARATOR, $path), 'strlen');
+        $path = str_replace(['/', '\\'], DIRECTORY_SEPARATOR, $path);
+        $parts = array_filter(explode(DIRECTORY_SEPARATOR, $path), 'strlen');
         $absolutes = [];
         foreach ($parts as $part) {
             if ('.' == $part) {

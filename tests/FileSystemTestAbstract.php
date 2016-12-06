@@ -1,4 +1,5 @@
 <?php
+
 namespace Hgraca\FileSystem\Test;
 
 use Hgraca\FileSystem\Exception\DirNotFoundException;
@@ -154,7 +155,7 @@ abstract class FileSystemTestAbstract extends PHPUnit_Framework_TestCase
      */
     public function testCopyFile_successful(string $sourcePath, string $destinationPath)
     {
-        $sourcePath      = $this->getBasePath() . $sourcePath;
+        $sourcePath = $this->getBasePath() . $sourcePath;
         $destinationPath = $this->getBasePath() . $destinationPath;
 
         self::assertTrue($this->fileSystem->copyFile($sourcePath, $destinationPath));
@@ -176,7 +177,7 @@ abstract class FileSystemTestAbstract extends PHPUnit_Framework_TestCase
      */
     public function testCopyFile_fail(string $sourcePath, string $destinationPath, string $expectedException)
     {
-        $sourcePath      = $this->getBasePath() . $sourcePath;
+        $sourcePath = $this->getBasePath() . $sourcePath;
         $destinationPath = $this->getBasePath() . $destinationPath;
 
         self::expectException($expectedException);
@@ -360,7 +361,7 @@ abstract class FileSystemTestAbstract extends PHPUnit_Framework_TestCase
      */
     public function test_copyLink(string $sourcePath, string $destinationPath, string $expectedException = null)
     {
-        $sourcePath      = $this->getBasePath() . $sourcePath;
+        $sourcePath = $this->getBasePath() . $sourcePath;
         $destinationPath = $this->getBasePath() . $destinationPath;
 
         if ($expectedException) {
@@ -392,7 +393,7 @@ abstract class FileSystemTestAbstract extends PHPUnit_Framework_TestCase
      */
     public function test_createLink(string $path, string $targetPath, string $expectedException = null)
     {
-        $path       = $this->getBasePath() . $path;
+        $path = $this->getBasePath() . $path;
         $targetPath = $this->getBasePath() . $targetPath;
 
         if ($expectedException) {
@@ -420,7 +421,7 @@ abstract class FileSystemTestAbstract extends PHPUnit_Framework_TestCase
      */
     public function test_getLinkTarget(string $path, string $targetPath, string $expectedException = null)
     {
-        $path       = $this->getBasePath() . $path;
+        $path = $this->getBasePath() . $path;
         $targetPath = $this->getBasePath() . $targetPath;
 
         if ($expectedException) {
@@ -445,7 +446,7 @@ abstract class FileSystemTestAbstract extends PHPUnit_Framework_TestCase
      */
     public function test_getAbsolutePath(string $path, string $expectedResult)
     {
-        $path           = $this->getBasePath() . $path;
+        $path = $this->getBasePath() . $path;
         $expectedResult = $this->getBasePath() . $expectedResult;
 
         self::assertEquals($expectedResult, $this->fileSystem->getAbsolutePath($path));
@@ -462,7 +463,7 @@ abstract class FileSystemTestAbstract extends PHPUnit_Framework_TestCase
 
     public function test_copy()
     {
-        $path       = $this->getBasePath() . '/a/';
+        $path = $this->getBasePath() . '/a/';
         $targetPath = $this->getBasePath() . '/b/';
 
         self::assertTrue($this->fileSystem->copy($path, $targetPath));
@@ -479,7 +480,7 @@ abstract class FileSystemTestAbstract extends PHPUnit_Framework_TestCase
 
     public function test_copy_EqualOriginAndDestination()
     {
-        $path       = $this->getBasePath() . '/a/';
+        $path = $this->getBasePath() . '/a/';
         $targetPath = $this->getBasePath() . '/a/';
 
         self::assertTrue($this->fileSystem->copy($path, $targetPath));
@@ -487,7 +488,7 @@ abstract class FileSystemTestAbstract extends PHPUnit_Framework_TestCase
 
     public function test_copy_DestinationFolderExists()
     {
-        $path       = $this->getBasePath() . '/a/dir/another_dir';
+        $path = $this->getBasePath() . '/a/dir/another_dir';
         $targetPath = $this->getBasePath() . '/b/dir/another_dir';
 
         $this->fileSystem->writeFile($this->getBasePath() . '/b/dir/another_dir/fileK', 'bla');

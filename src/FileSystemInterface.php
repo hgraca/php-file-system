@@ -1,4 +1,5 @@
 <?php
+
 namespace Hgraca\FileSystem;
 
 use Hgraca\FileSystem\Exception\FileNotFoundException;

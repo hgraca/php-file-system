@@ -1,16 +1,17 @@
 <?php
+
 namespace Hgraca\FileSystem;
 
 use Hgraca\Helper\StringHelper;
 
 class InMemoryFileSystem extends FileSystemAbstract
 {
-    const DIR_DISCRIMINATOR  = 'dir';
+    const DIR_DISCRIMINATOR = 'dir';
     const LINK_DISCRIMINATOR = 'link';
     const FILE_DISCRIMINATOR = 'file';
 
-    const KEY_TYPE          = 'type';
-    const KEY_CONTENT       = 'content';
+    const KEY_TYPE = 'type';
+    const KEY_CONTENT = 'content';
     const KEY_CREATION_TIME = 'creation_time';
 
     /** @var array */
@@ -53,8 +54,8 @@ class InMemoryFileSystem extends FileSystemAbstract
     protected function writeFileRaw(string $path, string $content)
     {
         $this->fileSystem[$path] = [
-            self::KEY_TYPE          => self::FILE_DISCRIMINATOR,
-            self::KEY_CONTENT       => $content,
+            self::KEY_TYPE => self::FILE_DISCRIMINATOR,
+            self::KEY_CONTENT => $content,
             self::KEY_CREATION_TIME => time(),
         ];
     }
@@ -72,7 +73,7 @@ class InMemoryFileSystem extends FileSystemAbstract
     protected function createLinkRaw(string $path, string $targetPath)
     {
         $this->fileSystem[$path] = [
-            self::KEY_TYPE    => self::LINK_DISCRIMINATOR,
+            self::KEY_TYPE => self::LINK_DISCRIMINATOR,
             self::KEY_CONTENT => $targetPath,
         ];
     }

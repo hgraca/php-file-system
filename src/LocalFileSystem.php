@@ -1,4 +1,5 @@
 <?php
+
 namespace Hgraca\FileSystem;
 
 use DirectoryIterator;
@@ -66,7 +67,7 @@ class LocalFileSystem extends FileSystemAbstract
 
     public function deleteDirRaw(string $path)
     {
-        $it    = new RecursiveDirectoryIterator($path, RecursiveDirectoryIterator::SKIP_DOTS);
+        $it = new RecursiveDirectoryIterator($path, RecursiveDirectoryIterator::SKIP_DOTS);
         $files = new RecursiveIteratorIterator($it, RecursiveIteratorIterator::CHILD_FIRST);
 
         foreach ($files as $file) {
@@ -85,7 +86,7 @@ class LocalFileSystem extends FileSystemAbstract
      */
     public function readDirRaw(string $path): array
     {
-       $iterator = new DirectoryIterator($path);
+        $iterator = new DirectoryIterator($path);
 
         $contents = [];
         foreach ($iterator as $fileInfo) {
