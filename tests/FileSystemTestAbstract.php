@@ -497,4 +497,21 @@ abstract class FileSystemTestAbstract extends PHPUnit_Framework_TestCase
         self::assertTrue($this->fileSystem->fileExists($this->getBasePath() . '/b/dir/another_dir/fileB'));
         self::assertFalse($this->fileSystem->fileExists($this->getBasePath() . '/b/dir/another_dir/fileK'));
     }
+
+    /**
+     * @dataProvider dataProvider_test_getExtension
+     */
+    public function test_getExtension(string $path, string $expectedExtension)
+    {
+        self::assertEquals($expectedExtension, $this->fileSystem->getExtension($path));
+    }
+
+    public function dataProvider_test_getExtension()
+    {
+        return [
+            ['/a/dir/fileA', ''],
+            ['/a/dir/fileA.php', 'php'],
+            ['/a/dir/fileA.bladibla', 'bladibla'],
+        ];
+    }
 }

@@ -8,6 +8,7 @@ use Hgraca\FileSystem\Exception\InvalidPathException;
 use Hgraca\FileSystem\Exception\PathIsDirException;
 use Hgraca\FileSystem\Exception\PathIsFileException;
 use Hgraca\FileSystem\Exception\PathIsLinkException;
+use SplFileInfo;
 
 abstract class FileSystemAbstract implements FileSystemInterface
 {
@@ -302,6 +303,13 @@ abstract class FileSystemAbstract implements FileSystemInterface
         }
 
         return DIRECTORY_SEPARATOR . implode(DIRECTORY_SEPARATOR, $absolutes);
+    }
+
+    public function getExtension(string $path): string
+    {
+        $path = str_replace(['/', '\\'], DIRECTORY_SEPARATOR, $path);
+
+        return (new SplFileInfo($path))->getExtension();
     }
 
     /**

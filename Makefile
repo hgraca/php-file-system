@@ -9,10 +9,10 @@ help:
 	@grep '^[^#[:space:]].*:' Makefile | grep -v '^default' | grep -v '^_' | sed 's/://' | xargs -n 1 echo ' -'
 
 composer-install:
-	composer install
+	php -n -d extension=json.so -d extension=tokenizer.so -d extension=dom.so /usr/bin/composer install
 
 composer-update:
-	composer update
+	php -n -d extension=json.so -d extension=tokenizer.so -d extension=dom.so /usr/bin/composer update
 
 coverage:
 	php -dzend_extension=xdebug.so bin/phpunit --coverage-text --coverage-clover=coverage.clover.xml

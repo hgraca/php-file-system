@@ -87,4 +87,6 @@ interface FileSystemInterface
     public function copy(string $sourcePath, string $destinationPath): bool;
 
     public function getAbsolutePath(string $path): string;
+
+    public function getExtension(string $path): string;
 }
